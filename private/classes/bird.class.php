@@ -238,4 +238,35 @@
         }
     }
 
+    public function delete() {
+        $this->validate();
+        if(!empty($this->errors)) {
+            return false;
+        }
+        $attributes = $this->attributes();
+
+        $sql = "DELETE FROM birds (";
+        $sql .= "WHERE id='" . self::$database->escape_string($this->id) . "' ";  
+        $sql .= "LIMIT 1";
+        $sql .= "')";
+
+        $stmt = self::$database->prepare($sql);
+        
+        $stmt->bindValue(':common_name', $this->common_name );
+        $stmt->bindValue(':habitat', $this->habitat );
+        $stmt->bindValue(':food', $this->food );
+        $stmt->bindValue(':conservation_id', $this->conservation_id );
+        $stmt->bindValue('backyard_tips', $this->backyard_tips );
+        
+        //$result = self::$database->exec($sql);
+        $result = $stmt->execute();
+
+        if( $result ) {
+            $this->id = self::$database->lastInsertID();
+        } else  echo "Delete query did not run";
+        
+        return $result;
+    }
+
+
 }
