@@ -239,34 +239,16 @@
     }
 
     public function delete() {
-        $this->validate();
-        if(!empty($this->errors)) {
-            return false;
-        }
-        $attributes = $this->attributes();
-
-        $sql = "DELETE FROM birds (";
-        $sql .= "WHERE id='" . self::$database->escape_string($this->id) . "' ";  
-        $sql .= "LIMIT 1";
-        $sql .= "')";
-
+        $sql = "DELETE FROM " . static::$table_name . "  ";
+        $sql .= "WHERE id = :id ";
+        $sql = "LIMIT 1";
         $stmt = self::$database->prepare($sql);
-        
-        $stmt->bindValue(':common_name', $this->common_name );
-        $stmt->bindValue(':habitat', $this->habitat );
-        $stmt->bindValue(':food', $this->food );
-        $stmt->bindValue(':conservation_id', $this->conservation_id );
-        $stmt->bindValue('backyard_tips', $this->backyard_tips );
-        
-        //$result = self::$database->exec($sql);
+        $stmt->bindValue(':id', $this->id );
         $result = $stmt->execute();
 
-        if( $result ) {
-            $this->id = self::$database->lastInsertID();
-        } else  echo "Delete query did not run";
-        
         return $result;
     }
+
 
 
 }
